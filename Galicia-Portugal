@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Coastal Winter - Jacob Davis</title>
+  <meta
+    name="description"
+    content="Coastal Winter, a photographic collection by Jacob Davis."
+  >
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="site-title" href="index.html" aria-label="Jacob Davis - Home">
+      <span>Jacob Davis</span>
+      <span class="site-title-divider" aria-hidden="true"></span>
+      <span class="site-title-section">Photographs</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="index.html">Collections</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="album">
+      <header class="album-header">
+        <a class="back-link" href="index.html">&larr; All collections</a>
+
+        <div class="album-heading">
+          <div>
+            <p class="eyebrow">Collection 01</p>
+            <h1>Coastal Winter</h1>
+          </div>
+
+          <dl class="album-metadata">
+            <div>
+              <dt>Date</dt>
+              <dd>February 2026</dd>
+            </div>
+
+            <div>
+              <dt>Camera</dt>
+              <dd>Nikon D850</dd>
+            </div>
+
+            <div>
+              <dt>Lens</dt>
+              <dd>50mm f/1.8</dd>
+            </div>
+          </dl>
+        </div>
+
+        <p class="album-description">
+          A few cold days near the coast: empty paths, pale light, and the
+          quiet distance between the sea and the town.
+        </p>
+      </header>
+
+      <div class="photo-grid">
+        <figure class="photo photo-wide">
+          <img
+            src="images/coastal-01.jpg"
+            alt="Winter coastline beneath a pale sky"
+            loading="eager"
+          >
+          <figcaption>01 - Looking west, late afternoon</figcaption>
+        </figure>
+
+        <figure class="photo">
+          <img
+            src="images/coastal-02.jpg"
+            alt="A detail photographed along the winter coast"
+            loading="lazy"
+          >
+          <figcaption>02 - Sea wall</figcaption>
+        </figure>
+
+        <figure class="photo">
+          <img
+            src="images/coastal-03.jpg"
+            alt="A quiet path close to the coast"
+            loading="lazy"
+          >
+          <figcaption>03 - The long way back</figcaption>
+        </figure>
+
+        <figure class="photo photo-portrait">
+          <img
+            src="images/coastal-04.jpg"
+            alt="A vertical coastal photograph"
+            loading="lazy"
+          >
+          <figcaption>04 - February light</figcaption>
+        </figure>
+
+        <figure class="photo photo-portrait">
+          <img
+            src="images/coastal-05.jpg"
+            alt="A vertical photograph taken near the shoreline"
+            loading="lazy"
+          >
+          <figcaption>05 - Edge of town</figcaption>
+        </figure>
+
+        <figure class="photo photo-wide">
+          <img
+            src="images/coastal-06.jpg"
+            alt="The coast shortly before sunset"
+            loading="lazy"
+          >
+          <figcaption>06 - Last frame</figcaption>
+        </figure>
+      </div>
+
+      <nav class="album-navigation" aria-label="Collection navigation">
+        <a href="index.html">
+          <span class="nav-label">Index</span>
+          <span>All collections</span>
+        </a>
+
+        <a class="next-collection" href="album.html">
+          <span class="nav-label">Next collection</span>
+          <span>Quiet Streets &rarr;</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="year">2026</span> Jacob Davis</p>
+    <a href="#top">Back to top &uarr;</a>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

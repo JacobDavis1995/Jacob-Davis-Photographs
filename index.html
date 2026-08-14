@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Jacob Davis - Photographs</title>
+  <meta
+    name="description"
+    content="Photographs by Jacob Davis. Digital and film photography."
+  >
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="site-title" href="index.html" aria-label="Jacob Davis - Home">
+      <span>Jacob Davis</span>
+      <span class="site-title-divider" aria-hidden="true"></span>
+      <span class="site-title-section">Photographs</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="active" href="index.html">Collections</a>
+      <a href="#about">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-heading">
+      <p class="eyebrow">Selected work</p>
+      <h1 id="page-heading">Photographic notes,<br>made slowly.</h1>
+      <p class="intro-text">
+        Personal photographs from digital cameras and rolls of film.
+        Collected by place, season, and whatever caught my attention.
+      </p>
+    </section>
+
+    <section class="collections" aria-labelledby="collections-heading">
+      <div class="section-heading">
+        <h2 id="collections-heading">Collections</h2>
+        <p>2024-2026</p>
+      </div>
+
+      <div class="collection-grid">
+        <article class="collection-card">
+          <a class="collection-image-link" href="album.html">
+            <figure class="collection-image">
+              <img
+                src="images/coastal-winter-cover.jpg"
+                alt="A quiet stretch of coastline in winter"
+                loading="eager"
+              >
+              <span class="collection-number">01</span>
+            </figure>
+          </a>
+
+          <div class="collection-details">
+            <div>
+              <h3>
+                <a href="album.html">Coastal Winter</a>
+              </h3>
+              <p class="collection-date">February 2026</p>
+            </div>
+
+            <p class="collection-camera">
+              Nikon D850<br>
+              50mm f/1.8
+            </p>
+          </div>
+        </article>
+
+        <article class="collection-card">
+          <a class="collection-image-link" href="album.html">
+            <figure class="collection-image">
+              <img
+                src="images/quiet-streets-cover.jpg"
+                alt="An empty residential street in evening light"
+                loading="lazy"
+              >
+              <span class="collection-number">02</span>
+            </figure>
+          </a>
+
+          <div class="collection-details">
+            <div>
+              <h3>
+                <a href="album.html">Quiet Streets</a>
+              </h3>
+              <p class="collection-date">October 2025</p>
+            </div>
+
+            <p class="collection-camera">
+              Canon AE-1<br>
+              Kodak Gold 200
+            </p>
+          </div>
+        </article>
+
+        <article class="collection-card">
+          <a class="collection-image-link" href="album.html">
+            <figure class="collection-image">
+              <img
+                src="images/summer-roll-cover.jpg"
+                alt="A sunlit summer landscape photographed on film"
+                loading="lazy"
+              >
+              <span class="collection-number">03</span>
+            </figure>
+          </a>
+
+          <div class="collection-details">
+            <div>
+              <h3>
+                <a href="album.html">One Summer Roll</a>
+              </h3>
+              <p class="collection-date">July 2025</p>
+            </div>
+
+            <p class="collection-camera">
+              Olympus OM-2<br>
+              Kodak Portra 400
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="about" id="about" aria-labelledby="about-heading">
+      <p class="eyebrow">About</p>
+
+      <div class="about-content">
+        <h2 id="about-heading">Jacob Davis is a photographer working with digital and film cameras.</h2>
+
+        <div>
+          <p>
+            This site is an ongoing archive of photographs, journeys, and
+            ordinary observations. It is updated when there is something new
+            worth sharing.
+          </p>
+
+          <a class="text-link" href="mailto:hello@example.com">
+            Email
+            <span aria-hidden="true">&nearr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="year">2026</span> Jacob Davis</p>
+    <a href="#top">Back to top &uarr;</a>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -8,55 +8,66 @@
   <link rel="stylesheet" href="styles.css">
   
   <style>
-    /* Responsive Grid */
+    /* Responsive Grid with natural auto-height rows */
     .photo-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 2rem;
-      align-items: start;
+      align-items: center;
     }
 
     .photo {
       margin: 0;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       background: transparent;
+      width: 100%;
     }
 
-    /* Base Container (Landscape default) */
+    /* Container adjusts dynamically without forcing cropped aspect ratios */
     .photo-wrapper {
+      position: relative;
       width: 100%;
-      aspect-ratio: 4 / 3;
-      overflow: hidden;
-      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
 
-    /* Container adjusts to portrait orientation when rotated 90 or 270 deg */
-    .photo-wrapper.is-portrait {
-      aspect-ratio: 3 / 4;
-    }
-
+    /* Standard unrotated images fill width naturally */
     .photo img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
       display: block;
       transition: transform 0.3s ease;
     }
 
-    /* Pure rotation without artificial scaling/cropping */
-    .rotate-90  { transform: rotate(90deg); }
-    .rotate-180 { transform: rotate(180deg); }
-    .rotate-270 { transform: rotate(270deg); }
+    /* 180 degree rotation */
+    .rotate-180 { 
+      transform: rotate(180deg); 
+    }
 
-    /* CSS Magic: Swaps rendering dimensions so 90/270 deg images fit the vertical frame */
-    .photo-wrapper.is-portrait img {
-      width: 133.33%;  /* (4 / 3) * 100% */
-      height: 75%;     /* (3 / 4) * 100% */
-      flex-shrink: 0;
+    /* 
+      90deg / 270deg Rotations:
+      When swapping landscape (4:3) to portrait (3:4):
+      Width becomes 75% (3/4) and aspect-ratio flips to 3/4 so zero cropping occurs.
+    */
+    .photo-wrapper.is-rotated-90,
+    .photo-wrapper.is-rotated-270 {
+      aspect-ratio: 3 / 4;
+    }
+
+    .photo-wrapper.is-rotated-90 img {
+      width: 133.333%;
+      max-width: none;
+      transform: rotate(90deg);
+    }
+
+    .photo-wrapper.is-rotated-270 img {
+      width: 133.333%;
+      max-width: none;
+      transform: rotate(270deg);
     }
   </style>
 </head>
@@ -125,14 +136,11 @@
     const BRANCH = "main";
 
     // --- PER-IMAGE ROTATION CONFIGURATION ---
-    // Specify exact file names and desired rotation angle (90, 180, 270)
     const ROTATIONS = {
       "photo-01.jpg": 90,
       "coastal-view.jpg": 270,
       "old-town.png": 180,
-
-      "000332010028.jpg": 270,
-      
+      "000332010028.jpg": 270
     };
 
     const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${FOLDER_PATH}`;
@@ -161,17 +169,23 @@
           const rawImageUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/${FOLDER_PATH}/${file.name}`;
           const rotationAngle = ROTATIONS[file.name] || 0;
           
-          // Check if rotation turns a landscape photo into portrait orientation
-          const isPortraitRotation = rotationAngle === 90 || rotationAngle === 270;
-          const wrapperClass = isPortraitRotation ? "photo-wrapper is-portrait" : "photo-wrapper";
-          const rotationClass = rotationAngle ? `rotate-${rotationAngle}` : "";
+          let wrapperClass = "photo-wrapper";
+          let imgClass = "";
+
+          if (rotationAngle === 90) {
+            wrapperClass += " is-rotated-90";
+          } else if (rotationAngle === 270) {
+            wrapperClass += " is-rotated-270";
+          } else if (rotationAngle === 180) {
+            imgClass = "rotate-180";
+          }
           
           const figure = document.createElement("figure");
           figure.className = "photo";
           
           figure.innerHTML = `
             <div class="${wrapperClass}">
-              <img src="${rawImageUrl}" alt="Photographic work" class="${rotationClass}" loading="lazy">
+              <img src="${rawImageUrl}" alt="Photographic work" class="${imgClass}" loading="lazy">
             </div>
           `;
 

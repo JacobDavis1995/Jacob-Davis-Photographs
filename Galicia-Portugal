@@ -3,16 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Coastal Winter - Jacob Davis</title>
-  <meta
-    name="description"
-    content="Coastal Winter, a photographic collection by Jacob Davis."
-  >
-
+  <title>Galicia & Portugal - Jacob Davis</title>
+  <meta name="description" content="Galicia & Portugal, a photographic collection by Jacob Davis.">
   <link rel="stylesheet" href="styles.css">
-</head>
+  
+  <style>
+    /* Styling for dynamic gallery features */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
 
+    .photo {
+      position: relative;
+      margin: 0;
+      background: #f4f4f4;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .photo-wrapper {
+      width: 100%;
+      height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-color: #eee;
+    }
+
+    .photo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    /* Rotation Utility Classes */
+    .rotate-90  { transform: rotate(90deg); }
+    .rotate-180 { transform: rotate(180deg); }
+    .rotate-270 { transform: rotate(270deg); }
+
+    .photo-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    .rotate-btn {
+      background: #eee;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .rotate-btn:hover {
+      background: #ddd;
+    }
+  </style>
+</head>
 <body>
   <header class="site-header">
     <a class="site-title" href="index.html" aria-label="Jacob Davis - Home">
@@ -20,7 +78,6 @@
       <span class="site-title-divider" aria-hidden="true"></span>
       <span class="site-title-section">Photographs</span>
     </a>
-
     <nav class="site-nav" aria-label="Main navigation">
       <a href="index.html">Collections</a>
       <a href="index.html#about">About</a>
@@ -31,102 +88,36 @@
     <article class="album">
       <header class="album-header">
         <a class="back-link" href="index.html">&larr; All collections</a>
-
         <div class="album-heading">
           <div>
-            <p class="eyebrow">Collection 01</p>
-            <h1>Coastal Winter</h1>
+            <p class="eyebrow">Collection 02</p>
+            <h1>Galicia & Portugal</h1>
           </div>
-
           <dl class="album-metadata">
             <div>
               <dt>Date</dt>
-              <dd>February 2026</dd>
+              <dd>2026</dd>
             </div>
-
             <div>
-              <dt>Camera</dt>
-              <dd>Nikon D850</dd>
-            </div>
-
-            <div>
-              <dt>Lens</dt>
-              <dd>50mm f/1.8</dd>
+              <dt>Location</dt>
+              <dd>Galicia & Portugal</dd>
             </div>
           </dl>
         </div>
-
         <p class="album-description">
-          A few cold days near the coast: empty paths, pale light, and the
-          quiet distance between the sea and the town.
+          A dynamic visual diary loaded directly from the repository.
         </p>
       </header>
 
-      <div class="photo-grid">
-        <figure class="photo photo-wide">
-          <img
-            src="images/coastal-01.jpg"
-            alt="Winter coastline beneath a pale sky"
-            loading="eager"
-          >
-          <figcaption>01 - Looking west, late afternoon</figcaption>
-        </figure>
-
-        <figure class="photo">
-          <img
-            src="images/coastal-02.jpg"
-            alt="A detail photographed along the winter coast"
-            loading="lazy"
-          >
-          <figcaption>02 - Sea wall</figcaption>
-        </figure>
-
-        <figure class="photo">
-          <img
-            src="images/coastal-03.jpg"
-            alt="A quiet path close to the coast"
-            loading="lazy"
-          >
-          <figcaption>03 - The long way back</figcaption>
-        </figure>
-
-        <figure class="photo photo-portrait">
-          <img
-            src="images/coastal-04.jpg"
-            alt="A vertical coastal photograph"
-            loading="lazy"
-          >
-          <figcaption>04 - February light</figcaption>
-        </figure>
-
-        <figure class="photo photo-portrait">
-          <img
-            src="images/coastal-05.jpg"
-            alt="A vertical photograph taken near the shoreline"
-            loading="lazy"
-          >
-          <figcaption>05 - Edge of town</figcaption>
-        </figure>
-
-        <figure class="photo photo-wide">
-          <img
-            src="images/coastal-06.jpg"
-            alt="The coast shortly before sunset"
-            loading="lazy"
-          >
-          <figcaption>06 - Last frame</figcaption>
-        </figure>
+      <!-- Dynamic gallery container -->
+      <div id="photo-grid" class="photo-grid">
+        <p id="loading-text">Loading gallery...</p>
       </div>
 
       <nav class="album-navigation" aria-label="Collection navigation">
         <a href="index.html">
           <span class="nav-label">Index</span>
           <span>All collections</span>
-        </a>
-
-        <a class="next-collection" href="album.html">
-          <span class="nav-label">Next collection</span>
-          <span>Quiet Streets &rarr;</span>
         </a>
       </nav>
     </article>
@@ -139,6 +130,79 @@
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    // --- CONFIGURATION ---
+    // Update these variables with your GitHub details:
+    const GITHUB_USERNAME = "your-github-username";
+    const GITHUB_REPO = "your-repo-name";
+    const FOLDER_PATH = "galicia-portugal"; // The folder containing your images
+    const BRANCH = "main"; // Or "master"
+
+    const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${FOLDER_PATH}`;
+    const photoGrid = document.getElementById("photo-grid");
+
+    // Fetch image directory from GitHub API
+    async function loadGallery() {
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("Unable to fetch repository files.");
+        
+        const files = await response.json();
+        
+        // Filter for image extensions
+        const imageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+        const imageFiles = files.filter(file => 
+          imageExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+        );
+
+        if (imageFiles.length === 0) {
+          photoGrid.innerHTML = "<p>No images found in the specified directory.</p>";
+          return;
+        }
+
+        // Clear loading state
+        photoGrid.innerHTML = "";
+
+        // Build gallery items dynamically
+        imageFiles.forEach((file, index) => {
+          const rawImageUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/${FOLDER_PATH}/${file.name}`;
+          
+          const figure = document.createElement("figure");
+          figure.className = "photo";
+          
+          figure.innerHTML = `
+            <div class="photo-wrapper">
+              <img id="img-${index}" src="${rawImageUrl}" alt="${file.name}" loading="lazy" data-rotation="0">
+            </div>
+            <div class="photo-controls">
+              <figcaption>${file.name}</figcaption>
+              <button class="rotate-btn" onclick="rotateImage('img-${index}')">rotate ↻</button>
+            </div>
+          `;
+
+          photoGrid.appendChild(figure);
+        });
+      } catch (error) {
+        photoGrid.innerHTML = `<p>Error loading photos: ${error.message}</p>`;
+      }
+    }
+
+    // Function to handle image rotation cycles (0deg -> 90deg -> 180deg -> 270deg -> 0deg)
+    function rotateImage(imageId) {
+      const img = document.getElementById(imageId);
+      let currentRotation = parseInt(img.getAttribute("data-rotation"), 10) || 0;
+      
+      currentRotation = (currentRotation + 90) % 360;
+      img.setAttribute("data-rotation", currentRotation);
+      
+      img.className = ""; // Reset rotation classes
+      if (currentRotation > 0) {
+        img.classList.add(`rotate-${currentRotation}`);
+      }
+    }
+
+    // Trigger loading on page load
+    loadGallery();
   </script>
 </body>
 </html>

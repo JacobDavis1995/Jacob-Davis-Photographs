@@ -8,66 +8,47 @@
   <link rel="stylesheet" href="styles.css">
   
   <style>
-    /* Styling for dynamic gallery features */
+    /* Responsive Grid */
     .photo-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
     }
 
     .photo {
-      position: relative;
       margin: 0;
-      background: #f4f4f4;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      background: transparent;
     }
 
+    /* Seamless Image Frame */
     .photo-wrapper {
       width: 100%;
-      height: 350px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      aspect-ratio: 4 / 3;
       overflow: hidden;
-      background-color: #eee;
+      background: transparent;
     }
 
     .photo img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
       transition: transform 0.3s ease;
     }
 
-    /* Rotation Utility Classes */
-    .rotate-90  { transform: rotate(90deg); }
+    /* Fixed CSS Rotations */
+    .rotate-90  { transform: scale(1.33) rotate(90deg); }
     .rotate-180 { transform: rotate(180deg); }
-    .rotate-270 { transform: rotate(270deg); }
+    .rotate-270 { transform: scale(1.33) rotate(270deg); }
 
-    .photo-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      box-sizing: border-box;
-      background: #fff;
-    }
-
-    .rotate-btn {
-      background: #eee;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 4px 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
-
-    .rotate-btn:hover {
-      background: #ddd;
+    /* Minimalist Figcaption */
+    .photo figcaption {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: #333;
+      text-transform: capitalize;
     }
   </style>
 </head>
@@ -109,7 +90,6 @@
         </p>
       </header>
 
-      <!-- Dynamic gallery container -->
       <div id="photo-grid" class="photo-grid">
         <p id="loading-text">Loading gallery...</p>
       </div>
@@ -131,17 +111,29 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // --- CONFIGURATION ---
-    // Update these variables with your GitHub details:
     const GITHUB_USERNAME = "JacobDavis1995";
     const GITHUB_REPO = "Jacob-Davis-Photographs";
-    const FOLDER_PATH = "Galicia"; // The folder containing your images
-    const BRANCH = "main"; // Or "master"
+    const FOLDER_PATH = "Galicia";
+    const BRANCH = "main";
+
+    // --- PER-IMAGE ROTATION CONFIGURATION ---
+    // Specify exact file names and desired rotation angle (90, 180, 270)
+    const ROTATIONS = {
+      "photo-01.jpg": 90,
+      "coastal-view.jpg": 270,
+      "old-town.png": 180
+    };
 
     const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${FOLDER_PATH}`;
     const photoGrid = document.getElementById("photo-grid");
 
-    // Fetch image directory from GitHub API
+    // Clean filenames into human-readable captions
+    function formatCaption(filename) {
+      return filename
+        .replace(/\.[^/.]+$/, "") // Remove file extension
+        .replace(/[-_]/g, " ");   // Replace dashes/underscores with spaces
+    }
+
     async function loadGallery() {
       try {
         const response = await fetch(apiUrl);
@@ -149,7 +141,6 @@
         
         const files = await response.json();
         
-        // Filter for image extensions
         const imageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
         const imageFiles = files.filter(file => 
           imageExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
@@ -160,24 +151,21 @@
           return;
         }
 
-        // Clear loading state
         photoGrid.innerHTML = "";
 
-        // Build gallery items dynamically
-        imageFiles.forEach((file, index) => {
+        imageFiles.forEach((file) => {
           const rawImageUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/${FOLDER_PATH}/${file.name}`;
+          const rotationAngle = ROTATIONS[file.name] || 0;
+          const rotationClass = rotationAngle ? `rotate-${rotationAngle}` : "";
           
           const figure = document.createElement("figure");
           figure.className = "photo";
           
           figure.innerHTML = `
             <div class="photo-wrapper">
-              <img id="img-${index}" src="${rawImageUrl}" alt="${file.name}" loading="lazy" data-rotation="0">
+              <img src="${rawImageUrl}" alt="${formatCaption(file.name)}" class="${rotationClass}" loading="lazy">
             </div>
-            <div class="photo-controls">
-              <figcaption>${file.name}</figcaption>
-              <button class="rotate-btn" onclick="rotateImage('img-${index}')">rotate ↻</button>
-            </div>
+            <figcaption>${formatCaption(file.name)}</figcaption>
           `;
 
           photoGrid.appendChild(figure);
@@ -187,21 +175,6 @@
       }
     }
 
-    // Function to handle image rotation cycles (0deg -> 90deg -> 180deg -> 270deg -> 0deg)
-    function rotateImage(imageId) {
-      const img = document.getElementById(imageId);
-      let currentRotation = parseInt(img.getAttribute("data-rotation"), 10) || 0;
-      
-      currentRotation = (currentRotation + 90) % 360;
-      img.setAttribute("data-rotation", currentRotation);
-      
-      img.className = ""; // Reset rotation classes
-      if (currentRotation > 0) {
-        img.classList.add(`rotate-${currentRotation}`);
-      }
-    }
-
-    // Trigger loading on page load
     loadGallery();
   </script>
 </body>

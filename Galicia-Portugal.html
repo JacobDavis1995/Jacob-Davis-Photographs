@@ -13,6 +13,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 2rem;
+      align-items: start;
     }
 
     .photo {
@@ -22,12 +23,20 @@
       background: transparent;
     }
 
-    /* Seamless Image Frame */
+    /* Base Container (Landscape default) */
     .photo-wrapper {
       width: 100%;
       aspect-ratio: 4 / 3;
       overflow: hidden;
       background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Container adjusts to portrait orientation when rotated 90 or 270 deg */
+    .photo-wrapper.is-portrait {
+      aspect-ratio: 3 / 4;
     }
 
     .photo img {
@@ -38,17 +47,16 @@
       transition: transform 0.3s ease;
     }
 
-    /* Fixed CSS Rotations */
-    .rotate-90  { transform: scale(1.33) rotate(90deg); }
+    /* Pure rotation without artificial scaling/cropping */
+    .rotate-90  { transform: rotate(90deg); }
     .rotate-180 { transform: rotate(180deg); }
-    .rotate-270 { transform: scale(1.33) rotate(270deg); }
+    .rotate-270 { transform: rotate(270deg); }
 
-    /* Minimalist Figcaption */
-    .photo figcaption {
-      margin-top: 0.75rem;
-      font-size: 0.9rem;
-      color: #333;
-      text-transform: capitalize;
+    /* CSS Magic: Swaps rendering dimensions so 90/270 deg images fit the vertical frame */
+    .photo-wrapper.is-portrait img {
+      width: 133.33%;  /* (4 / 3) * 100% */
+      height: 75%;     /* (3 / 4) * 100% */
+      flex-shrink: 0;
     }
   </style>
 </head>
@@ -127,13 +135,6 @@
     const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${FOLDER_PATH}`;
     const photoGrid = document.getElementById("photo-grid");
 
-    // Clean filenames into human-readable captions
-    function formatCaption(filename) {
-      return filename
-        .replace(/\.[^/.]+$/, "") // Remove file extension
-        .replace(/[-_]/g, " ");   // Replace dashes/underscores with spaces
-    }
-
     async function loadGallery() {
       try {
         const response = await fetch(apiUrl);
@@ -156,16 +157,19 @@
         imageFiles.forEach((file) => {
           const rawImageUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/${FOLDER_PATH}/${file.name}`;
           const rotationAngle = ROTATIONS[file.name] || 0;
+          
+          // Check if rotation turns a landscape photo into portrait orientation
+          const isPortraitRotation = rotationAngle === 90 || rotationAngle === 270;
+          const wrapperClass = isPortraitRotation ? "photo-wrapper is-portrait" : "photo-wrapper";
           const rotationClass = rotationAngle ? `rotate-${rotationAngle}` : "";
           
           const figure = document.createElement("figure");
           figure.className = "photo";
           
           figure.innerHTML = `
-            <div class="photo-wrapper">
-              <img src="${rawImageUrl}" alt="${formatCaption(file.name)}" class="${rotationClass}" loading="lazy">
+            <div class="${wrapperClass}">
+              <img src="${rawImageUrl}" alt="Photographic work" class="${rotationClass}" loading="lazy">
             </div>
-            <figcaption>${formatCaption(file.name)}</figcaption>
           `;
 
           photoGrid.appendChild(figure);

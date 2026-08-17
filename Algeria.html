@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algeria - Jacob Davis</title>
+  <meta name="description" content="Algeria, a photographic collection by Jacob Davis.">
+  <link rel="stylesheet" href="styles.css">
+  
+  <style>
+    /* Responsive Grid with natural auto-height rows */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .photo {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+      width: 100%;
+    }
+
+    /* Container adjusts dynamically without forcing cropped aspect ratios */
+    .photo-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Standard unrotated images fill width naturally */
+    .photo img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    /* 180 degree rotation */
+    .rotate-180 { 
+      transform: rotate(180deg); 
+    }
+
+    /* 
+      90deg / 270deg Rotations:
+      When swapping landscape (4:3) to portrait (3:4):
+      Width becomes 75% (3/4) and aspect-ratio flips to 3/4 so zero cropping occurs.
+    */
+    .photo-wrapper.is-rotated-90,
+    .photo-wrapper.is-rotated-270 {
+      aspect-ratio: 3 / 4;
+    }
+
+    .photo-wrapper.is-rotated-90 img {
+      width: 133.333%;
+      max-width: none;
+      transform: rotate(90deg);
+    }
+
+    .photo-wrapper.is-rotated-270 img {
+      width: 133.333%;
+      max-width: none;
+      transform: rotate(270deg);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="index.html" aria-label="Jacob Davis - Home">
+      <span>Jacob Davis</span>
+      <span class="site-title-divider" aria-hidden="true"></span>
+      <span class="site-title-section">Photographs</span>
+    </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="index.html">Collections</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="album">
+      <header class="album-header">
+        <a class="back-link" href="index.html">&larr; All collections</a>
+        <div class="album-heading">
+          <div>
+            <p class="eyebrow">Collection 02</p>
+            <h1>Algeria</h1>
+          </div>
+          <dl class="album-metadata">
+            <div>
+              <dt>Date</dt>
+              <dd>June 2024</dd>
+            </div>
+            <div>
+              <dt>Location</dt>
+              <dd>Algeria</dd>
+            </div>
+            <div>
+              <dt>Camera</dt>
+              <dd>Canon EOS 650D</dd>
+            </div>
+          </dl>
+        </div>
+        <p class="album-description">
+          Roadtrip:<br/>Algiers - Constantine - Annaba - Jijel - Algiers.
+        </p>
+      </header>
+
+      <div id="photo-grid" class="photo-grid">
+        <p id="loading-text">Loading gallery...</p>
+      </div>
+
+      <nav class="album-navigation" aria-label="Collection navigation">
+        <a href="index.html">
+          <span class="nav-label">Index</span>
+          <span>All collections</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="year">2026</span> Jacob Davis</p>
+    <a href="#top">Back to top &uarr;</a>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const GITHUB_USERNAME = "JacobDavis1995";
+    const GITHUB_REPO = "Jacob-Davis-Photographs";
+    const FOLDER_PATH = "Algeria";
+    const BRANCH = "main";
+
+    // --- PER-IMAGE ROTATION CONFIGURATION ---
+    // Add image filenames and rotation angles (90, 180, 270) here as needed
+    const ROTATIONS = {
+      // "example-photo.jpg": 90
+    };
+
+    const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${FOLDER_PATH}`;
+    const photoGrid = document.getElementById("photo-grid");
+
+    async function loadGallery() {
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("Unable to fetch repository files.");
+        
+        const files = await response.json();
+        
+        const imageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+        const imageFiles = files.filter(file => 
+          imageExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+        );
+
+        if (imageFiles.length === 0) {
+          photoGrid.innerHTML = "<p>No images found in the specified directory.</p>";
+          return;
+        }
+
+        photoGrid.innerHTML = "";
+
+        imageFiles.forEach((file) => {
+          const rawImageUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/${FOLDER_PATH}/${file.name}`;
+          const rotationAngle = ROTATIONS[file.name] || 0;
+          
+          let wrapperClass = "photo-wrapper";
+          let imgClass = "";
+
+          if (rotationAngle === 90) {
+            wrapperClass += " is-rotated-90";
+          } else if (rotationAngle === 270) {
+            wrapperClass += " is-rotated-270";
+          } else if (rotationAngle === 180) {
+            imgClass = "rotate-180";
+          }
+          
+          const figure = document.createElement("figure");
+          figure.className = "photo";
+          
+          figure.innerHTML = `
+            <div class="${wrapperClass}">
+              <img src="${rawImageUrl}" alt="Photographic work" class="${imgClass}" loading="lazy">
+            </div>
+          `;
+
+          photoGrid.appendChild(figure);
+        });
+      } catch (error) {
+        photoGrid.innerHTML = `<p>Error loading photos: ${error.message}</p>`;
+      }
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
